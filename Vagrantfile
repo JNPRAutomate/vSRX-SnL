@@ -1,0 +1,259 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+require "vagrant-host-shell"
+require "vagrant-junos"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+#vSRX 1
+  config.vm.define "srx1" do |srx|
+    srx.vm.network "forwarded_port", guest: 830, host: 8831
+    srx.vm.box = "juniper/ffp-12.1X47-D20.7"
+    srx.vm.hostname = "SRX1"
+    srx.vm.network "private_network",
+                   ip: "10.1.1.1",
+                   nic_type: 'virtio',
+                   virtualbox__intnet: "A-to-1"
+    srx.vm.network "private_network",
+                   ip: "10.2.1.1",
+                   nic_type: 'virtio',
+                   virtualbox__intnet: "B-to-1"
+    srx.vm.network "private_network",
+                   ip: "10.3.1.1",
+                   nic_type: 'virtio',
+                   virtualbox__intnet: "C-to-1"
+    srx.vm.network "private_network",
+                   ip: "10.4.1.1",
+                   nic_type: 'virtio',
+                   virtualbox__intnet: "D-to-1"
+    srx.vm.network "private_network",
+                   ip: "10.5.1.1",
+                   nic_type: 'virtio',
+                   virtualbox__intnet: "E-to-1"
+
+    srx.vm.synced_folder "", "/vagrant", disabled: true
+
+    srx.vm.provider "virtualbox" do |v|
+      # increase RAM to support AppFW and IPS
+      # comment out to make it run at 2GB
+      v.customize ["modifyvm", :id, "--memory", "2048"]
+      v.check_guest_additions = false
+    end
+
+    #
+    srx.vm.provision "file", source: "vSRX-configs/vsrx1-inital.cfg", destination: "/cf/root/vsrx1-inital.cfg"
+    srx.vm.provision "file", source: "vSRX-configs/nopolicy.cfg", destination: "/cf/root/nopolicy.cfg"
+    srx.vm.provision :host_shell do |host_shell|
+      # provides the inital configuration
+      host_shell.inline = 'vagrant ssh srx1 -c "/usr/sbin/cli -f /cf/root/vsrx1-inital.cfg"'
+    end
+  end
+
+  #vSRX 2
+    config.vm.define "srx2" do |srx|
+      srx.vm.network "forwarded_port", guest: 830, host: 8832
+      srx.vm.box = "juniper/ffp-12.1X47-D20.7"
+      srx.vm.hostname = "SRX2"
+      srx.vm.network "private_network",
+                     ip: "10.1.2.1",
+                     nic_type: 'virtio',
+                     virtualbox__intnet: "A-to-2"
+      srx.vm.network "private_network",
+                     ip: "10.2.2.1",
+                     nic_type: 'virtio',
+                     virtualbox__intnet: "B-to-2"
+      srx.vm.network "private_network",
+                     ip: "10.3.2.1",
+                     nic_type: 'virtio',
+                     virtualbox__intnet: "C-to-2"
+      srx.vm.network "private_network",
+                     ip: "10.4.2.1",
+                     nic_type: 'virtio',
+                     virtualbox__intnet: "D-to-2"
+      srx.vm.network "private_network",
+                     ip: "10.4.2.1",
+                     nic_type: 'virtio',
+                     virtualbox__intnet: "E-to-2"
+
+      srx.vm.synced_folder "", "/vagrant", disabled: true
+
+      srx.vm.provider "virtualbox" do |v|
+        # increase RAM to support AppFW and IPS
+        # comment out to make it run at 2GB
+        v.customize ["modifyvm", :id, "--memory", "2048"]
+        v.check_guest_additions = false
+      end
+
+      #
+      srx.vm.provision "file", source: "vSRX-configs/vsrx2-inital.cfg", destination: "/cf/root/vsrx2-inital.cfg"
+      srx.vm.provision "file", source: "vSRX-configs/nopolicy.cfg", destination: "/cf/root/nopolicy.cfg"
+      srx.vm.provision :host_shell do |host_shell|
+        # provides the inital configuration
+        host_shell.inline = 'vagrant ssh srx2 -c "/usr/sbin/cli -f /cf/root/vsrx2-inital.cfg"'
+      end
+    end
+
+    #vSRX A
+      config.vm.define "srxa" do |srx|
+        srx.vm.network "forwarded_port", guest: 830, host: 8833
+        srx.vm.box = "juniper/ffp-12.1X47-D20.7"
+        srx.vm.hostname = "SRXA"
+        srx.vm.network "private_network",
+                       ip: "10.1.1.2",
+                       nic_type: 'virtio',
+                       virtualbox__intnet: "A-to-1"
+        srx.vm.network "private_network",
+                       ip: "10.1.2.2",
+                       nic_type: 'virtio',
+                       virtualbox__intnet: "A-to-2"
+
+        srx.vm.synced_folder "", "/vagrant", disabled: true
+
+        srx.vm.provider "virtualbox" do |v|
+          # increase RAM to support AppFW and IPS
+          # comment out to make it run at 2GB
+          v.customize ["modifyvm", :id, "--memory", "2048"]
+          v.check_guest_additions = false
+        end
+
+        #
+        srx.vm.provision "file", source: "vSRX-configs/vsrxa-inital.cfg", destination: "/cf/root/vsrxa-inital.cfg"
+        srx.vm.provision "file", source: "vSRX-configs/nopolicy.cfg", destination: "/cf/root/nopolicy.cfg"
+        srx.vm.provision :host_shell do |host_shell|
+          # provides the inital configuration
+          host_shell.inline = 'vagrant ssh srxa -c "/usr/sbin/cli -f /cf/root/vsrxa-inital.cfg"'
+        end
+      end
+
+      #vSRX b
+        config.vm.define "srxb" do |srx|
+          srx.vm.network "forwarded_port", guest: 830, host: 8834
+          srx.vm.box = "juniper/ffp-12.1X47-D20.7"
+          srx.vm.hostname = "SRXB"
+          srx.vm.network "private_network",
+                         ip: "10.2.1.2",
+                         nic_type: 'virtio',
+                         virtualbox__intnet: "B-to-1"
+          srx.vm.network "private_network",
+                         ip: "10.2.2.2",
+                         nic_type: 'virtio',
+                         virtualbox__intnet: "B-to-2"
+
+          srx.vm.synced_folder "", "/vagrant", disabled: true
+
+          srx.vm.provider "virtualbox" do |v|
+            # increase RAM to support AppFW and IPS
+            # comment out to make it run at 2GB
+            v.customize ["modifyvm", :id, "--memory", "2048"]
+            v.check_guest_additions = false
+          end
+
+          #
+          srx.vm.provision "file", source: "vSRX-configs/vsrxb-inital.cfg", destination: "/cf/root/vsrxb-inital.cfg"
+          srx.vm.provision "file", source: "vSRX-configs/nopolicy.cfg", destination: "/cf/root/nopolicy.cfg"
+          srx.vm.provision :host_shell do |host_shell|
+            # provides the inital configuration
+            host_shell.inline = 'vagrant ssh srxb -c "/usr/sbin/cli -f /cf/root/vsrxb-inital.cfg"'
+          end
+      end
+
+      #vSRX c
+        config.vm.define "srxc" do |srx|
+          srx.vm.network "forwarded_port", guest: 830, host: 8835
+          srx.vm.box = "juniper/ffp-12.1X47-D20.7"
+          srx.vm.hostname = "SRXC"
+          srx.vm.network "private_network",
+                         ip: "10.3.1.2",
+                         nic_type: 'virtio',
+                         virtualbox__intnet: "C-to-1"
+          srx.vm.network "private_network",
+                         ip: "10.3.2.2",
+                         nic_type: 'virtio',
+                         virtualbox__intnet: "C-to-2"
+
+          srx.vm.synced_folder "", "/vagrant", disabled: true
+
+          srx.vm.provider "virtualbox" do |v|
+            # increase RAM to support AppFW and IPS
+            # comment out to make it run at 2GB
+            v.customize ["modifyvm", :id, "--memory", "2048"]
+            v.check_guest_additions = false
+          end
+
+          #
+          srx.vm.provision "file", source: "vSRX-configs/vsrxc-inital.cfg", destination: "/cf/root/vsrxc-inital.cfg"
+          srx.vm.provision "file", source: "vSRX-configs/nopolicy.cfg", destination: "/cf/root/nopolicy.cfg"
+          srx.vm.provision :host_shell do |host_shell|
+            # provides the inital configuration
+            host_shell.inline = 'vagrant ssh srxc -c "/usr/sbin/cli -f /cf/root/vsrxc-inital.cfg"'
+          end
+      end
+
+      #vSRX d
+        config.vm.define "srxd" do |srx|
+          srx.vm.network "forwarded_port", guest: 830, host: 8836
+          srx.vm.box = "juniper/ffp-12.1X47-D20.7"
+          srx.vm.hostname = "SRXD"
+          srx.vm.network "private_network",
+                         ip: "10.4.1.2",
+                         nic_type: 'virtio',
+                         virtualbox__intnet: "D-to-1"
+          srx.vm.network "private_network",
+                         ip: "10.4.2.2",
+                         nic_type: 'virtio',
+                         virtualbox__intnet: "D-to-2"
+
+          srx.vm.synced_folder "", "/vagrant", disabled: true
+
+          srx.vm.provider "virtualbox" do |v|
+            # increase RAM to support AppFW and IPS
+            # comment out to make it run at 2GB
+            v.customize ["modifyvm", :id, "--memory", "2048"]
+            v.check_guest_additions = false
+          end
+
+          #
+          srx.vm.provision "file", source: "vSRX-configs/vsrxd-inital.cfg", destination: "/cf/root/vsrxd-inital.cfg"
+          srx.vm.provision "file", source: "vSRX-configs/nopolicy.cfg", destination: "/cf/root/nopolicy.cfg"
+          srx.vm.provision :host_shell do |host_shell|
+            # provides the inital configuration
+            host_shell.inline = 'vagrant ssh srxd -c "/usr/sbin/cli -f /cf/root/vsrxd-inital.cfg"'
+          end
+      end
+
+      #vSRX E
+        config.vm.define "srxe" do |srx|
+          srx.vm.network "forwarded_port", guest: 830, host: 8837
+          srx.vm.box = "juniper/ffp-12.1X47-D20.7"
+          srx.vm.hostname = "SRXE"
+          srx.vm.network "private_network",
+                         ip: "10.5.1.2",
+                         nic_type: 'virtio',
+                         virtualbox__intnet: "E-to-1"
+          srx.vm.network "private_network",
+                         ip: "10.5.2.2",
+                         nic_type: 'virtio',
+                         virtualbox__intnet: "E-to-2"
+
+          srx.vm.synced_folder "", "/vagrant", disabled: true
+
+          srx.vm.provider "virtualbox" do |v|
+            # increase RAM to support AppFW and IPS
+            # comment out to make it run at 2GB
+            v.customize ["modifyvm", :id, "--memory", "2048"]
+            v.check_guest_additions = false
+          end
+
+          #
+          srx.vm.provision "file", source: "vSRX-configs/vsrxe-inital.cfg", destination: "/cf/root/vsrxe-inital.cfg"
+          srx.vm.provision "file", source: "vSRX-configs/nopolicy.cfg", destination: "/cf/root/nopolicy.cfg"
+          srx.vm.provision :host_shell do |host_shell|
+            # provides the inital configuration
+            host_shell.inline = 'vagrant ssh srxe -c "/usr/sbin/cli -f /cf/root/vsrxe-inital.cfg"'
+          end
+      end
+end
