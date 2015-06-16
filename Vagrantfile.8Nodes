@@ -269,7 +269,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       #vSRX F
         config.vm.define "srxf" do |srx|
-          srx.vm.network "forwarded_port", guest: 830, host: 8837
+          srx.vm.network "forwarded_port", guest: 830, host: 8838
           srx.vm.box = "juniper/ffp-12.1X47-D20.7"
           srx.vm.hostname = "SRXF"
           srx.vm.network "private_network",
