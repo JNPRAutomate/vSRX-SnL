@@ -8,6 +8,8 @@ Topology
 
 The topology consists of seven VMs: seven vSRXs. Thes vSRX are configured in a spine and leaf topology. Where each leaf node is connected to each spine node.
 
+There are two topologies Vagrantfile.7nodes and Vagrantfile.6nodes. You can copy either to the Vagrantfile. The default is 6 nodes as the 7 node made my laptop explode.
+
 ```
 
 Insert diagram here
