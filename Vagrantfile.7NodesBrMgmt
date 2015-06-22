@@ -249,7 +249,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           srx.vm.network "private_network",
                          ip: "10.5.2.2",
                          nic_type: 'virtio',
-                         virtualbox__intnet: "E-to-2"
+                         virtualbox__intnet: "E-to-2",
+                         bridge: 'p2p1'
 
           srx.vm.synced_folder "", "/vagrant", disabled: true
 
