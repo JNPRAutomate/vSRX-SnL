@@ -1,0 +1,30 @@
+#vSRX Leaf
+config.vm.define "srxa" do |srx|
+  srx.vm.network "forwarded_port", guest: 830, host: 8833
+  srx.vm.box = "juniper/ffp-12.1X47-D20.7"
+  srx.vm.hostname = "SRXA"
+  srx.vm.network "private_network",
+               ip: "10.1.1.2",
+               nic_type: 'virtio',
+               virtualbox__intnet: "A-to-1"
+  srx.vm.network "private_network",
+               ip: "10.1.2.2",
+               nic_type: 'virtio',
+               virtualbox__intnet: "A-to-2"
+
+  srx.vm.synced_folder "", "/vagrant", disabled: true
+
+  srx.vm.provider "virtualbox" do |v|
+    # increase RAM to support AppFW and IPS
+    # comment out to make it run at 2GB
+    v.customize ["modifyvm", :id, "--memory", "2048"]
+    v.check_guest_additions = false
+  end
+
+  srx.vm.provision "file", source: "vSRX-configs/vsrxa-inital.cfg", destination: "/cf/root/vsrxa-inital.cfg"
+  srx.vm.provision "file", source: "vSRX-configs/nopolicy.cfg", destination: "/cf/root/nopolicy.cfg"
+  srx.vm.provision :host_shell do |host_shell|
+    # provides the inital configuration
+    host_shell.inline = 'vagrant ssh srxa -c "/usr/sbin/cli -f /cf/root/vsrxa-inital.cfg"'
+  end
+end
