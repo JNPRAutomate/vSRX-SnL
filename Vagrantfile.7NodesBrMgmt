@@ -35,7 +35,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                    nic_type: 'virtio',
                    virtualbox__intnet: "E-to-1"
     srx.vm.network "public_network",
-                   bridged: 'p2p1'
+                   bridge: 'p2p1'
 
     srx.vm.synced_folder "", "/vagrant", disabled: true
 
@@ -81,7 +81,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                      nic_type: 'virtio',
                      virtualbox__intnet: "E-to-2"
       srx.vm.network "public_network",
-                     bridged: 'p2p1'
+                     bridge: 'p2p1'
 
       srx.vm.synced_folder "", "/vagrant", disabled: true
 
@@ -115,7 +115,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                        nic_type: 'virtio',
                        virtualbox__intnet: "A-to-2"
         srx.vm.network "public_network",
-                       bridged: 'p2p1'
+                       bridge: 'p2p1'
 
         srx.vm.synced_folder "", "/vagrant", disabled: true
 
@@ -149,7 +149,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                          nic_type: 'virtio',
                          virtualbox__intnet: "B-to-2"
           srx.vm.network "public_network",
-                          bridged: 'p2p1'
+                          bridge: 'p2p1'
 
           srx.vm.synced_folder "", "/vagrant", disabled: true
 
@@ -183,7 +183,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                          nic_type: 'virtio',
                          virtualbox__intnet: "C-to-2"
           srx.vm.network "public_network",
-                         bridged: 'p2p1'
+                         bridge: 'p2p1'
 
           srx.vm.synced_folder "", "/vagrant", disabled: true
 
@@ -217,7 +217,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                          nic_type: 'virtio',
                          virtualbox__intnet: "D-to-2"
          srx.vm.network "public_network",
-                        bridged: 'p2p1'
+                        bridge: 'p2p1'
 
           srx.vm.synced_folder "", "/vagrant", disabled: true
 
